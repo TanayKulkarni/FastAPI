@@ -25,18 +25,18 @@ async def root():
 
     return HTMLResponse(content=html_response,status_code=200)
 
-# @app.get("/html_jinja/{id}",tags=['html'], response_class=HTMLResponse)
-# async def example(request: Request, id:str):
-#     return templates.TemplateResponse("index.html", {"request": request, 'id':id})
+@app.get("/html_jinja/{id}",tags=['html'], response_class=HTMLResponse)
+async def example(request: Request, id:str):
+    return templates.TemplateResponse("index.html", {"request": request, 'id':id})
 
-# @app.post("/login_inbuilt") ## yeh inbuilt fastapi ka form hai, post method jaisa hai 
-# async def login(username: str = Form(...), password: str = Form(...)):
-#     return {"username": username}
+@app.post("/login_inbuilt") ## yeh inbuilt fastapi ka form hai, post method jaisa hai 
+async def login(username: str = Form(...), password: str = Form(...)):
+    return {"username": username}
 
-# @app.get("/form", response_class=HTMLResponse)
-# async def form(request: Request):
-#     return templates.TemplateResponse("form.html", {"request": request})
+@app.get("/form", response_class=HTMLResponse)
+async def form(request: Request):
+    return templates.TemplateResponse("form.html", {"request": request})
 
-# @app.post("/login") ## yaaha html file ke form se values lega aur dekhega
-# async def login(name: str = Form(...)):
-#     return {"Username": name}
+@app.post("/login") ## yaaha html file ke form se values lega aur dekhega
+async def login(name: str = Form(...)):
+    return {"Username": name}
