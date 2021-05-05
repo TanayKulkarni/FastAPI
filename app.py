@@ -1,42 +1,43 @@
 from fastapi import FastAPI, Request, Form
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
-
+from fastapi.staticfiles import StaticFiles
+from iris import ml
+from urllib.parse import urljoin
 
 app = FastAPI()
+app.mount("/images", StaticFiles(directory="images"), name="images")
+
 templates = Jinja2Templates(directory="ui")
 
 @app.get("/")
-async def base():
-    return {"Tanay": "Kulkarni"}
-
-@app.get("/html",tags=['html'])
-async def root():
-    html_response = """
-    <html>
-        <head>
-           <title>FastAPI</title>
-        </head>
-        <body><marquee>"""+'app bangaaya be!!!!'+"""</marquee>
-        
-        </body>
-    </html>
-    """
-
-    return HTMLResponse(content=html_response,status_code=200)
-
-@app.get("/html_jinja/{id}",tags=['html'], response_class=HTMLResponse)
-async def example(request: Request, id:str):
-    return templates.TemplateResponse("index.html", {"request": request, 'id':id})
-
-@app.post("/login_inbuilt") ## yeh inbuilt fastapi ka form hai, post method jaisa hai 
-async def login(username: str = Form(...), password: str = Form(...)):
-    return {"username": username}
-
-@app.get("/form", response_class=HTMLResponse)
 async def form(request: Request):
     return templates.TemplateResponse("form.html", {"request": request})
 
-@app.post("/login") ## yaaha html file ke form se values lega aur dekhega
-async def login(name: str = Form(...)):
-    return {"Username": name}
+
+
+@app.post("/iris",response_class=HTMLResponse) ## yaaha html file ke form se values lega aur dekhega
+async def login(request: Request, w: int = Form(...),x: int = Form(...),y: int = Form(...),z: int = Form(...)):
+    flower =  ml(int(w),int(x),int(y),int(z))
+    img_url = 'images/'+ flower + '.jpg'
+    # html_response = """
+    # <!DOCTYPE html>
+    # <html>
+    #     <head>
+    #        <title>FastAPI</title>
+    #     </head>
+    #     <body background ="""+img_url+""">
+    #         <b><strong><h1 style="text-align:center;color:white">
+    #         """+flower+"""</h1></b></strong>
+    #     </body>
+    # </html>
+    # """
+
+    # return HTMLResponse(content=html_response,status_code=200)
+    return templates.TemplateResponse("image.html", {"request": request, "img_url":img_url,'flower':flower})
+    # return FileResponse(img_url)
+
+@app.get("/im",response_class=HTMLResponse)
+async def form(request: Request):
+    return templates.TemplateResponse("image.html", {"request": request})
+
